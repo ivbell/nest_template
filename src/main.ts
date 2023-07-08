@@ -15,7 +15,7 @@ async function bootstrap() {
     AppModule,
     new FastifyAdapter(),
     {
-      logger: WinstonModule.createLogger({ ...winstonFactory }),
+      logger: WinstonModule.createLogger({ ...winstonFactory() }),
     },
   );
   const config = app.get(ConfigService);

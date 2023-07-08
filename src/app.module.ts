@@ -1,12 +1,12 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Logger, MiddlewareConsumer, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { WinstonModule } from 'nest-winston';
-import * as winston from 'winston';
+import { RequestLoggerMiddleware } from './common/middleware/request-logger.middleware';
 import configuration from './config/configuration';
 import { typeormFactory } from './config/factory/typeorm.factory';
-import { RequestLoggerMiddleware } from './common/middleware/request-logger.middleware';
 
+//@ts-ignore
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -19,9 +19,6 @@ import { RequestLoggerMiddleware } from './common/middleware/request-logger.midd
       imports: [ConfigModule],
       useFactory: typeormFactory,
       inject: [ConfigService],
-    }),
-    WinstonModule.forRoot({
-      transports: [new winston.transports.Console()],
     }),
   ],
   providers: [Logger],
