@@ -1,0 +1,5 @@
+{
+  "*.(ts|tsx)": ["tsc --noEmit", "prettier --write", "eslint --fix"],
+  "*.(html|js|jsx|mjs)": ["eslint", "prettier --write"],
+  "*.scss": "prettier --write"
+}
