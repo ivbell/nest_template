@@ -5,8 +5,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { RequestLoggerMiddleware } from './common/middleware/request-logger.middleware';
 import configuration from './config/configuration';
 import { typeormFactory } from './config/factory/typeorm.factory';
+import { UserModule } from './module/user/user.module';
+import { AuthModule } from './module/auth/auth.module';
 
-//@ts-ignore
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -20,6 +21,8 @@ import { typeormFactory } from './config/factory/typeorm.factory';
       useFactory: typeormFactory,
       inject: [ConfigService],
     }),
+    UserModule,
+    AuthModule,
   ],
   providers: [Logger],
 })
