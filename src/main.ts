@@ -39,7 +39,10 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
   const is_dev = process.env.NODE_ENV === 'development';
-  await app.listen(config.get('port'), is_dev ? 'localhost' : '0.0.0.0');
+  await app.listen(
+    config.get<number>('port') ?? 3000,
+    is_dev ? 'localhost' : '0.0.0.0',
+  );
 }
 
 bootstrap();
