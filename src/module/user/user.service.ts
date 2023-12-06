@@ -33,7 +33,7 @@ export class UserService {
 
   async findUserByQuery(
     where: FindOptionsWhere<UserEntity>,
-  ): Promise<UserEntity> {
+  ): Promise<UserEntity | null> {
     return await this.userRepo.findOneBy(where);
   }
 

@@ -42,16 +42,12 @@ export class AuthService {
   async validate(
     token: string,
   ): Promise<[payload: boolean | never, user: UserEntity]> {
-    console.log(
-      '🚀 ~ file: auth.service.ts:43 ~ AuthService ~ validate ~ token:',
-      token,
-    );
     try {
       const decoded: any = this.jwt.decode(token);
       if (!decoded) {
         throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
       }
-      const user: UserEntity = await this.validateUser(decoded);
+      const user = await this.validateUser(decoded);
       if (!user) {
         throw new UnauthorizedException();
       }
@@ -61,7 +57,7 @@ export class AuthService {
     }
   }
 
-  async validateUser(decoded: JwtPayloadType): Promise<UserEntity> {
+  async validateUser(decoded: JwtPayloadType): Promise<UserEntity | null> {
     return this.userService.findUserByQuery({ id: decoded.id });
   }
 }

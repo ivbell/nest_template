@@ -31,9 +31,11 @@ export class AuthGuard implements CanActivate {
     return payload;
   }
 
-  private extractTokenFromHeader(request: FastifyRequest): string | undefined {
+  private extractTokenFromHeader(
+    request: FastifyRequest,
+  ): string | undefined | null {
     const { valid, value } = request.unsignCookie(
-      request.headers.cookie[sessionConst.session_name_cookie],
+      request.cookies?.[sessionConst.session_name_cookie] ?? '',
     );
     return valid ? value : undefined;
   }
