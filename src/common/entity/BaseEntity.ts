@@ -21,4 +21,4 @@ export class BaseEntity {
   deletedAt?: Date;
 }
 
-export interface IBaseEntity extends BaseEntity {}
+export type IBaseEntity = BaseEntity;
