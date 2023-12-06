@@ -1,42 +1,54 @@
-import configuration from '@/src/config/configuration';
 import {
   CanActivate,
   ExecutionContext,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import { FastifyRequest } from 'fastify';
-import { sessionConst } from '../const/session.const';
-import { AuthService } from '../auth.service';
 import { serializePublicUserHelper } from '../../user/helpers/serialize-public-user.helper';
+import { AuthService } from '../auth.service';
+import { sessionConst } from '../const/session.const';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  constructor(
-    private readonly jwt: JwtService,
-    private readonly authService: AuthService,
-  ) {}
+  constructor(private readonly authService: AuthService) {}
 
   async canActivate(context: ExecutionContext) {
-    const request = context.switchToHttp().getRequest();
-    const token = this.extractTokenFromHeader(request);
-    if (!token) {
+    try {
+      const request = context.switchToHttp().getRequest();
+      const token = this.extractTokenFromHeader(request);
+      console.log(
+        '🚀 ~ file: auth.guard.ts:20 ~ AuthGuard ~ canActivate ~ token:',
+        token,
+      );
+      if (!token) {
+        throw new UnauthorizedException();
+      }
+      const [payload, user] = await this.authService.validate(token);
+      if (payload) {
+        request['user'] = serializePublicUserHelper(user);
+      }
+      return payload;
+    } catch (error) {
+      console.log(
+        '🚀 ~ file: auth.guard.ts:29 ~ AuthGuard ~ canActivate ~ error:',
+        error,
+      );
       throw new UnauthorizedException();
     }
-    const [payload, user] = await this.authService.validate(token);
-    if (payload) {
-      request['user'] = serializePublicUserHelper(user);
-    }
-    return payload;
   }
 
   private extractTokenFromHeader(
     request: FastifyRequest,
   ): string | undefined | null {
-    const { valid, value } = request.unsignCookie(
-      request.cookies?.[sessionConst.session_name_cookie] ?? '',
-    );
-    return valid ? value : undefined;
+    try {
+      const { valid, value } = request.unsignCookie(
+        request.cookies?.[sessionConst.session_name_cookie] ?? '',
+      );
+
+      return valid ? value : undefined;
+    } catch (error) {
+      return undefined;
+    }
   }
 }

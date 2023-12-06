@@ -1,3 +1,4 @@
+import fastifyCookie from '@fastify/cookie';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import {
@@ -9,9 +10,6 @@ import { WinstonModule } from 'nest-winston';
 import 'winston-daily-rotate-file';
 import { AppModule } from './app.module';
 import { winstonFactory } from './config/factory/winston.factory';
-import { ValidationPipe } from '@nestjs/common';
-import fastifyCookie from '@fastify/cookie';
-import configuration from './config/configuration';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
@@ -21,13 +19,27 @@ async function bootstrap() {
       logger: WinstonModule.createLogger({ ...winstonFactory() }),
     },
   );
-
-  await app.register(fastifyCookie, {
-    secret: configuration().cookie.secret, // for cookies signature
-  });
-
-  app.useGlobalPipes(new ValidationPipe());
   const config = app.get(ConfigService);
+
+  app.enableCors({
+    origin: [
+      config.get<string>('app.client') ?? '',
+      'http://localhost:3000',
+    ].filter((i) => i.length),
+    credentials: true,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    preflightContinue: false,
+  });
+  await app.register(fastifyCookie, {
+    secret: config.get('cookie.secret'),
+    parseOptions: {
+      path: '/',
+      signed: true,
+      sameSite: 'none',
+      secure: true,
+      httpOnly: true,
+    },
+  });
 
   const doc = new DocumentBuilder()
     .setTitle('Cats example')

@@ -5,6 +5,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { tags } from 'typia';
 
 @Entity()
 export class BaseEntity {
@@ -21,4 +22,9 @@ export class BaseEntity {
   deletedAt?: Date;
 }
 
-export type IBaseEntity = BaseEntity;
+export type IBaseEntity = {
+  id: number & tags.Type<'int32'>;
+  created: Date & tags.Format<'date-time'>;
+  updated: Date & tags.Format<'date-time'>;
+  deletedAt?: undefined | null | (Date & tags.Format<'date-time'>);
+};

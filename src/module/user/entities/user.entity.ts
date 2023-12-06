@@ -1,6 +1,6 @@
-import { BaseEntity } from '@/src/common/entity/BaseEntity';
-import { IsNotEmpty, IsString, MinLength } from 'class-validator';
+import { BaseEntity, IBaseEntity } from '@/src/common/entity/BaseEntity';
 import { Column, Entity } from 'typeorm';
+import { tags } from 'typia';
 
 @Entity({
   name: 'user',
@@ -10,17 +10,15 @@ export class UserEntity extends BaseEntity {
     nullable: false,
     unique: true,
   })
-  @IsString()
-  @IsNotEmpty()
   username!: string;
 
   @Column({
     nullable: false,
   })
-  @IsString()
-  @IsNotEmpty()
-  @MinLength(8)
   password!: string;
 }
 
-export type IUserEntity = UserEntity;
+export type IUserEntity = IBaseEntity & {
+  username: string & tags.MinLength<3> & tags.Pattern<'^[a-zA-Z0-9]+$'>;
+  password: string & tags.MinLength<8>;
+};

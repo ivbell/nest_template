@@ -1,12 +1,6 @@
-import { IsNotEmpty, IsString, MinLength } from 'class-validator';
+import { tags } from 'typia';
 
-export class AuthenticatedDto {
-  @IsString()
-  @IsNotEmpty()
+export type AuthenticatedDto = {
   username: string;
-
-  @IsString()
-  @IsNotEmpty()
-  @MinLength(8)
-  password: string;
-}
+  password: string & tags.MinLength<8>;
+};

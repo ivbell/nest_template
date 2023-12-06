@@ -1,15 +1,9 @@
-import { UserEntity } from '@/src/module/user/entities/user.entity';
-import { OmitType } from '@nestjs/mapped-types';
-import { IsNotEmpty, IsString, MinLength } from 'class-validator';
+import { tags } from 'typia';
+import { IUserEntity } from '../entities/user.entity';
 
-export class CreateUserDto extends OmitType(UserEntity, [
-  'created',
-  'updated',
-  'deletedAt',
-  'id',
-]) {
-  @MinLength(8)
-  @IsString()
-  @IsNotEmpty()
-  password_confirm: string;
-}
+export type CreateUserDto = Omit<
+  IUserEntity,
+  'created' | 'id' | 'updated' | 'deletedAt'
+> & {
+  password_confirm: string & tags.MinLength<8>;
+};
